@@ -10,14 +10,14 @@ import {useState, useEffect} from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 const App = () => {
-  const [gallery1, setGallery1] = useState([]),
-  const [gallery2, setGallery2] = useState([]),
-  const [gallery3, setGallery3] = useState([]),
-  const [searchReuslts, setSearchReuslts] = useState([]),
-  const [loading, setLoading] = useState(true),
+  const [gallery1, setGallery1] = useState([])
+  const [gallery2, setGallery2] = useState([])
+  const [gallery3, setGallery3] = useState([])
+  const [searchResults, setSearchResults] = useState([])
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
-  OMDB_URL = "http://www.omdbapi.com/?apikey=24ad60e9";
+  const OMDB_URL = "http://www.omdbapi.com/?i=tt3896198&apikey=907b4b85";
 
   useEffect (() => {
     fetchMovies()
@@ -60,7 +60,7 @@ const App = () => {
       });
   };
 
-  showSearchResult = async (searchString) => {
+  const showSearchResult = async (searchString) => {
     if (searchString === "") {
       setError(false), 
       setSearchResults([]), () => {
