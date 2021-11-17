@@ -6,90 +6,90 @@ import { Container, Alert, Dropdown } from "react-bootstrap";
 import MyNavbar from "./components/MyNavbar";
 import MyFooter from "./components/MyFooter";
 import MovieList from "./components/MovieList";
+import {useState, useEffect} from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
-class App extends Component {
-  state = {
-    gallery1: [],
-    gallery2: [],
-    gallery3: [],
-    searchResults: [],
-    loading: true,
-    error: false,
-  };
+const App = () => {
+  const [gallery1, setGallery1] = useState([]),
+  const [gallery2, setGallery2] = useState([]),
+  const [gallery3, setGallery3] = useState([]),
+  const [searchReuslts, setSearchReuslts] = useState([]),
+  const [loading, setLoading] = useState(true),
+  const [error, setError] = useState(false)
 
   OMDB_URL = "http://www.omdbapi.com/?apikey=24ad60e9";
 
-  componentDidMount = () => {
-    this.fetchMovies();
-  };
+  useEffect (() => {
+    fetchMovies()
+  }, [])
 
-  fetchMovies = () => {
+  const fetchMovies = () => {
     Promise.all([
-      fetch(this.OMDB_URL + "&s=harry%20potter")
+      fetch(OMDB_URL + "&s=harry%20potter")
         .then((response) => response.json())
         .then((responseObject) => {
           if (responseObject.Response === "True") {
-            this.setState({ gallery1: responseObject.Search });
+            setGallery1(responseObject.Search);
           } else {
-            this.setState({ error: true });
+            setError(true);
           }
         }),
-      fetch(this.OMDB_URL + "&s=avengers")
+      fetch(OMDB_URL + "&s=avengers")
         .then((response) => response.json())
         .then((responseObject) => {
           if (responseObject.Response === "True") {
-            this.setState({ gallery2: responseObject.Search });
+            setGallery2(responseObject.Search );
           } else {
-            this.setState({ error: true });
+            setError(true);
           }
         }),
-      fetch(this.OMDB_URL + "&s=star%20wars")
+      fetch(OMDB_URL + "&s=star%20wars")
         .then((response) => response.json())
         .then((responseObject) => {
           if (responseObject.Response === "True") {
-            this.setState({ gallery3: responseObject.Search });
+            setGallery3(responseObject.Search )
           } else {
-            this.setState({ error: true });
+            setError(true);
           }
         }),
     ])
-      .then(() => this.setState({ loading: false }))
+      .then(() => setLoading(false))
       .catch((err) => {
-        this.setState({ error: true });
+        setError(true);
         console.log("An error has occurred:", err);
       });
   };
 
   showSearchResult = async (searchString) => {
     if (searchString === "") {
-      this.setState({ error: false, searchResults: [] }, () => {
-        this.fetchMovies();
-      });
+      setError(false), 
+      setSearchResults([]), () => {
+        fetchMovies();
+      };
     } else {
       try {
-        const response = await fetch(this.OMDB_URL + "&s=" + searchString);
+        const response = await fetch(OMDB_URL + "&s=" + searchString);
         if (response.ok) {
           const data = await response.json();
           if (data.Response === "True") {
-            this.setState({ searchResults: data.Search, error: false });
+            setSearchResults(data.Search), 
+            setError(false );
           } else {
-            this.setState({ error: true });
+            setError(true);
           }
         } else {
-          this.setState({ error: true });
+          setError(true);
           console.log("an error occurred");
         }
       } catch (error) {
-        this.setState({ error: true });
+        setError(true);
         console.log(error);
       }
     }
   };
-
-  render() {
     return (
       <div>
-        <MyNavbar showSearchResult={this.showSearchResult} />
+        <MyNavbar showSearchResult={showSearchResult} />
         <Container fluid className="px-4">
           <div className="d-flex justify-content-between">
             <div className="d-flex">
@@ -116,33 +116,33 @@ class App extends Component {
               <i className="fa fa-th icons"></i>
             </div>
           </div>
-          {this.state.error && (
+          {error && (
             <Alert variant="danger" className="text-center">
               An error has occurred, please try again!
             </Alert>
           )}
-          {this.state.searchResults?.length > 0 && (
+          {searchResults?.length > 0 && (
             <MovieList
               title="Search results"
-              movies={this.state.searchResults}
+              movies={searchResults}
             />
           )}
-          {!this.state.error && !this.state.searchResults?.length > 0 && (
+          {!error && !searchResults?.length > 0 && (
             <>
               <MovieList
                 title="Harry Potter"
-                loading={this.state.loading}
-                movies={this.state.gallery1.slice(0, 6)}
+                loading={loading}
+                movies={setGallery1.slice(0, 6)}
               />
               <MovieList
                 title="The Avengers"
-                loading={this.state.loading}
-                movies={this.state.gallery2.slice(0, 6)}
+                loading={loading}
+                movies={gallery2.slice(0, 6)}
               />
               <MovieList
                 title="Star Wars"
-                loading={this.state.loading}
-                movies={this.state.gallery3.slice(0, 6)}
+                loading={loading}
+                movies={gallery3.slice(0, 6)}
               />
             </>
           )}
@@ -150,7 +150,18 @@ class App extends Component {
         </Container>
       </div>
     );
-  }
 }
+// class App extends Component {
+//   state = {
+//     gallery1: [],
+//     gallery2: [],
+//     gallery3: [],
+//     searchResults: [],
+//     loading: true,
+//     error: false,
+//   };
+  // componentDidMount = () => {
+  //   this.fetchMovies();
+  // };
 
 export default App;
